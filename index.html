@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YallaSurf | Israel Surf Forecast & Weather App</title>
+    
+    <!-- Meta tags for SEO -->
+    <meta name="description" content="Premium real-time surf weather forecast, wave energy, and marine wind data for all beaches along the Israeli coastline. Clean glassmorphic UI and interactive map.">
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="logo">
+            <i class="fa-solid fa-water wave-icon animate-pulse"></i>
+            <span>YallaSurf</span>
+        </div>
+        
+        <div class="header-status">
+            <span class="live-dot"></span>
+            <span class="status-text">LIVE MEDITERRANEAN DATA</span>
+        </div>
+
+        <div class="header-controls">
+            <button id="theme-toggle-btn" class="control-btn" title="Toggle Theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button id="units-toggle-btn" class="control-btn" title="Toggle Units">
+                <span class="unit-indicator">METRIC</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Responsive Layout Container -->
+    <main class="app-container">
+        <!-- Sidebar: Spot Selector -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Search beaches or spots...">
+                </div>
+                
+                <div class="filters-row">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="favs">
+                        <i class="fa-solid fa-star fav-star-icon"></i> Favs
+                    </button>
+                    <button class="filter-btn" data-filter="north">North</button>
+                    <button class="filter-btn" data-filter="center">Center</button>
+                    <button class="filter-btn" data-filter="south">South</button>
+                </div>
+            </div>
+
+            <!-- Scrollable Beach List -->
+            <div class="spots-list" id="spots-list">
+                <!-- Dynamic injected spots cards here -->
+                <div class="loading-spots">
+                    <div class="spinner"></div>
+                    <p>Loading spots...</p>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu Toggle Button (only visible on mobile) -->
+            <button id="mobile-sidebar-toggle" class="mobile-toggle" aria-label="Toggle Beach List">
+                <i class="fa-solid fa-list-ul"></i>
+                <span>Spots</span>
+            </button>
+        </aside>
+
+        <!-- Dashboard Content Area -->
+        <section class="dashboard-content" id="dashboard-content">
+            <!-- Loading Indicator Overlay -->
+            <div class="loading-overlay" id="loading-overlay">
+                <div class="spinner-large"></div>
+                <p>Retrieving real-time forecast data...</p>
+            </div>
+
+            <!-- Spot Hero Header -->
+            <div class="spot-hero">
+                <div class="spot-hero-info">
+                    <div class="spot-title-row">
+                        <h1 id="spot-name">Tel Aviv - Hilton Beach</h1>
+                        <button id="fav-btn" class="fav-action-btn" title="Add to Favorites">
+                            <i class="fa-regular fa-star"></i>
+                        </button>
+                    </div>
+                    <div class="spot-meta">
+                        <span id="spot-break-type" class="badge break-badge">Jetty / Sandbar</span>
+                        <span id="spot-region" class="badge region-badge">Center Coast</span>
+                    </div>
+                    <p id="spot-tips" class="spot-tips">Best with gentle Easterly winds and medium NW swell. Popular jetty break.</p>
+                </div>
+                <div id="spot-rating" class="spot-rating-container">
+                    <div class="rating-label">SURF CONDITIONS</div>
+                    <div id="spot-rating-badge" class="rating-value rating-good">GOOD</div>
+                </div>
+            </div>
+
+            <!-- Live Conditions Grid (2x2) -->
+            <div class="conditions-grid">
+                <!-- Swell Card -->
+                <div class="metric-card glass swell-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-wave-square metric-icon swell-icon-color"></i>
+                            <span>Swell</span>
+                        </div>
+                        <span class="card-subtitle">Primary Wave Height</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="metric-value-row">
+                            <span class="metric-main" id="metric-swell-height">0.6m</span>
+                            <div class="metric-trend-dir">
+                                <i class="fa-solid fa-arrow-up-right-from-square arrow-dir" id="metric-swell-arrow"></i>
+                                <span id="metric-swell-dir">NW</span>
+                            </div>
+                        </div>
+                        <div class="metric-footer">
+                            <span class="footer-highlight">Period: <strong id="metric-swell-period">8.5s</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wind Card -->
+                <div class="metric-card glass wind-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-wind metric-icon wind-icon-color"></i>
+                            <span>Wind</span>
+                        </div>
+                        <span id="metric-wind-status" class="card-subtitle offshore-badge">Offshore</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="metric-value-row">
+                            <span class="metric-main" id="metric-wind-speed">6 <span class="unit-sub">kts</span></span>
+                            <div class="metric-trend-dir">
+                                <i class="fa-solid fa-location-arrow compass-icon" id="metric-wind-arrow"></i>
+                                <span id="metric-wind-dir">E</span>
+                            </div>
+                        </div>
+                        <div class="metric-footer">
+                            <span id="metric-wind-desc">Grooming conditions</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nearshore Wave Energy Card -->
+                <div class="metric-card glass energy-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-bolt metric-icon energy-icon-color animate-pulse"></i>
+                            <span>Wave Energy</span>
+                        </div>
+                        <span class="card-subtitle">Kinetic Swell Power</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="metric-value-row">
+                            <span class="metric-main" id="metric-wave-energy">23 <span class="unit-sub">kJ</span></span>
+                        </div>
+                        <div class="metric-footer">
+                            <span id="metric-energy-desc">Clean, playful power</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Water & Air Temp Card -->
+                <div class="metric-card glass temp-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-thermometer-half metric-icon temp-icon-color"></i>
+                            <span>Temperature</span>
+                        </div>
+                        <span class="card-subtitle">Real-time Readings</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="temp-readings">
+                            <div class="temp-item">
+                                <span class="temp-val" id="metric-sea-temp">27°C</span>
+                                <span class="temp-lbl">Sea Water</span>
+                            </div>
+                            <div class="temp-divider"></div>
+                            <div class="temp-item">
+                                <span class="temp-val" id="metric-air-temp">29°C</span>
+                                <span class="temp-lbl">Air Temp</span>
+                            </div>
+                        </div>
+                        <div class="metric-footer">
+                            <span id="metric-weather-desc">Sunny & Clean</span>
+                        </div>
+                </div>
+            </div>
+
+            <!-- 48-Hour Forecast Trend -->
+            <div class="chart-section glass">
+                <div class="section-title-row">
+                    <h2>48-Hour Forecast Trend</h2>
+                    <div class="chart-legend">
+                        <span class="legend-item"><span class="legend-color wave-color"></span>Swell Height</span>
+                        <span class="legend-item"><span class="legend-color wind-color"></span>Wind Speed</span>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="forecastChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 5-Day Surf Outlook -->
+            <div class="forecast-5day glass">
+                <h2>5-Day Surf Outlook</h2>
+                <span class="click-tip">Select a day to view its daytime hourly drilldown below</span>
+                <div class="forecast-cards" id="forecast-5day-container">
+                    <!-- Dynamic Injected 5-Day Outlook Cards -->
+                </div>
+            </div>
+
+            <!-- Daytime Hourly Forecast Drilldown (06:00 - 20:00) -->
+            <div class="hourly-drilldown glass" id="hourly-drilldown">
+                <div class="section-title-row">
+                    <h2 id="hourly-drilldown-title">Day Drilldown: Today's Hourly Forecast</h2>
+                    <span class="daylight-indicator"><i class="fa-solid fa-sun animate-pulse" style="color: #ff9f43;"></i> Daylight Hours (06:00 - 20:00)</span>
+                </div>
+                
+                <div class="hourly-table-wrapper">
+                    <div class="hourly-table-header">
+                        <span class="hdr-col col-hour">Hour</span>
+                        <span class="hdr-col col-rating">Rating</span>
+                        <span class="hdr-col col-surf">Surf (m)</span>
+                        <span class="hdr-col col-board">Board</span>
+                        <span class="hdr-col col-swell">Swell</span>
+                        <span class="hdr-col col-period">Period</span>
+                        <span class="hdr-col col-wind">Wind</span>
+                        <span class="hdr-col col-energy">Wave Energy</span>
+                    </div>
+                    <div class="hourly-rows" id="hourly-rows">
+                        <!-- Dynamic Injected Hourly Rows -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Coastal Map Panel -->
+        <section class="map-pane glass" id="map-pane">
+            <div class="map-header">
+                <h2>Israeli Surf Coast</h2>
+                <span class="map-tip">Click pins to select spot</span>
+            </div>
+            <div id="map"></div>
+        </section>
+    </main>
+
+    <!-- Leaflet JS for Map -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <!-- Custom Application Controller -->
+    <script src="app.js"></script>
+</body>
+</html>
