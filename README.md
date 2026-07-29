@@ -22,14 +22,6 @@ YallaSurf is a premium, real-time, responsive surf forecasting web application d
     *   **Nearshore Wave Energy (kJ)**: Reverse-engineered kinetic wave power formula adjusted with a $7.3$ multiplier to match leading global models.
     *   **Hourly Quality Ratings**: Dynamic ratings (`FLAT`, `POOR`, `FAIR`, `GOOD`, `EPIC`) based on wind-to-beach orientation, wind speed, and swell periods.
 
-### 🏄‍♂️ Live Surfboard Selection Advisory Column
-A dynamic matching system inspired by the *Surf Holidays Guide* is embedded into the hourly forecast grid:
-*   **Longboard** (`🪵`): Suggested on flat or micro-wave days. High buoyancy lets you cruise easily on tiny rollers.
-*   **Fish** (`🐟`): Suggested on small, playful, clean glassy waves. Offers paddle power and skates over fat sections.
-*   **Mini-Mal** (`🛹`): Suggested on small, messy onshore days to easily plow through crumbly chop.
-*   **Shortboard** (`⚡`): Suggested on medium, clean offshore days. Optimal for carving and sharp snaps in the pocket.
-*   **Hybrid** (`🏄‍♂️`): Suggested on medium-sized, messy onshore days to maintain speed on choppy wave faces.
-*   **Step-Up / Gun** (`🚀` / `🌊`): Suggested on heavy swells for absolute control on large wave faces.
 
 ### ⚙️ Premium UX & Aesthetics
 *   **Modern Glassmorphism**: Vibrant neon cyan highlights, custom micro-animations (e.g. glowing sun, pulsing icons), and a sleek dark theme.
