@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function initApp() {
     setupTheme();
     setupEventHandlers();
-    initLeafletMap();
+    // initLeafletMap(); // Disabled "Israeli Surf Coast" Leaflet Map panel
     renderSpotsSidebar();
     preloadSidebarMetrics(); // Fetch live metrics for sidebar cards
     loadSpotData(state.selectedSpot);
@@ -264,8 +264,10 @@ function toggleTheme() {
     localStorage.setItem('yallasurf_theme', newTheme);
     updateThemeIcon(newTheme);
     
-    // Re-render map tiles to match theme
-    updateMapTiles(newTheme);
+    // Re-render map tiles to match theme if map is active
+    if (state.leafletMap) {
+        updateMapTiles(newTheme);
+    }
 }
 
 function toggleUnits() {
@@ -361,6 +363,7 @@ function initLeafletMap() {
 }
 
 function updateMapTiles(theme) {
+    if (!state.leafletMap) return;
     // If tile layer exists, remove it
     if (state.tileLayer) {
         state.leafletMap.removeLayer(state.tileLayer);

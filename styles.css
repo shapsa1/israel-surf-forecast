@@ -181,7 +181,7 @@ body {
 /* --- App Container Grid --- */
 .app-container {
     display: grid;
-    grid-template-columns: 320px 1fr 340px;
+    grid-template-columns: 320px 1fr;
     flex: 1;
     overflow: hidden;
     position: relative;

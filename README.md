@@ -6,9 +6,8 @@ YallaSurf is a premium, real-time, responsive surf forecasting web application d
 
 ## ✨ Features
 
-### 🗺️ Interactive Spot Selection
+### 🔍 Spot Selection & Filtering
 *   **Complete Israeli Beach Directory**: Over 16 major surf spots ranging from northern beaches (Haifa, Netanya) to southern shores (Ashdod, Ashkelon).
-*   **Interactive Leaflet Map**: Tap any custom circle pinpoint marker along the Israeli coast to view real-time data immediately.
 *   **Advanced Search & Filter**: Instant searching by beach name and regional category tabs (North, Center, South).
 *   **Favorites System**: Toggle the star button to cache your favorite beach break for quick, one-click loading on your next visit.
 
@@ -36,14 +35,13 @@ A dynamic matching system inspired by the *Surf Holidays Guide* is embedded into
 *   **Modern Glassmorphism**: Vibrant neon cyan highlights, custom micro-animations (e.g. glowing sun, pulsing icons), and a sleek dark theme.
 *   **Real-time Unit Conversion**: Instantly switch between Metric (meters, km/h, °C) and Imperial (feet, mph, °F) units with a global header toggle.
 *   **Timezone-Safe Local Parsing**: Advanced date deconstruction ensures Open-Meteo forecasts align precisely with Israel local time offsets without lag.
-*   **Fully Responsive**: Completely optimized with horizontal-scroll panels for smooth mobile swiping and desktop side-by-side grids.
+*   **Fully Responsive**: Completely optimized with horizontal-scroll panels for smooth mobile swiping and desktop grid layouts.
 
 ---
 
 ## 🛠️ Technology Stack
 *   **HTML5 & CSS3**: Native semantic architecture, flexbox, custom grid-templates, and pure Vanilla CSS custom design system.
-*   **JavaScript (ES6+)**: Vanilla asynchronous ES6 JS (No bloat frameworks, no dependencies).
-*   **Leaflet.js**: Lightweight open-source mapping engine.
+*   **JavaScript (ES6+)**: Vanilla asynchronous ES6 JS (No bloat frameworks, no external dependencies).
 *   **FontAwesome Icons**: Premium iconography for indicators.
 *   **Open-Meteo Marine API**: Parallel coordinate batch-fetching on page load to eliminate API lags.
 
