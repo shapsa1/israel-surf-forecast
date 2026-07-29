@@ -848,10 +848,6 @@ function renderHourlyDrilldown() {
         // Create elegant row
         const surfRange = calculateSurfRange(rawHeight, period, displayWind, windRating.status, state.unitSystem);
         
-        // Recommended Surfboard
-        const windSpeedKnots = rawWindSpeed * 0.539957;
-        const boardRec = getSurfboardRecommendation(rawHeight, period, windSpeedKnots, windRating.status);
-
         const row = document.createElement('div');
         row.className = 'hourly-row';
         row.innerHTML = `
@@ -860,10 +856,6 @@ function renderHourlyDrilldown() {
                 <span class="day-badge rating-${qualityRating.toLowerCase()}">${qualityRating}</span>
             </div>
             <div class="col-surf">${surfRange}</div>
-            <div class="col-board" title="${boardRec.name}: ${boardRec.desc}">
-                <span>${boardRec.visual}</span>
-                <span style="font-size: 11px; font-weight: 700; margin-left: 4px; color: var(--text-main);">${boardRec.name}</span>
-            </div>
             <div class="col-swell">
                 ${displayHeight.toFixed(1)}${heightUnit}
                 <i class="fa-solid fa-arrow-down" style="transform: rotate(${rawSwellDir}deg); font-size: 10px; color: var(--text-muted);" title="Swell Direction: ${rawSwellDir}°"></i>
@@ -1181,79 +1173,5 @@ async function preloadSidebarMetrics() {
         }
     } catch (err) {
         console.error("Error preloading sidebar metrics:", err);
-    }
-}
-
-function getSurfboardRecommendation(height, period, windSpeedKnots, windStatus) {
-    // 1. Flat conditions
-    if (height < 0.35) {
-        return {
-            name: "Longboard",
-            suitability: "FLAT/TINY",
-            suitabilityClass: "rating-poor",
-            visual: "🪵",
-            desc: "Waves are flat or tiny. A high-volume Longboard or soft top Mini-Mal is essential to glide and catch these micro rollers."
-        };
-    }
-    
-    // 2. Playful small conditions
-    if (height < 0.85) {
-        if (windStatus === "OFFSHORE" || windSpeedKnots < 8) {
-            return {
-                name: "Fish",
-                suitability: "PLAYFUL GLASS",
-                suitabilityClass: "rating-good",
-                visual: "🐟",
-                desc: "Playful small glassy surf! A Fish design offers superior paddling power and skates effortlessly over slow sections."
-            };
-        } else {
-            return {
-                name: "Mini-Mal",
-                suitability: "MUSH-BUSTING",
-                suitabilityClass: "rating-fair",
-                visual: "🛹",
-                desc: "Slightly choppy, weak surf. A Mini-Mal or Funboard has the stability and volume to plow through soft, crumbly sections."
-            };
-        }
-    }
-    
-    // 3. Medium solid clean conditions
-    if (height < 1.5) {
-        if (windStatus === "OFFSHORE" || windSpeedKnots < 10) {
-            return {
-                name: "Shortboard",
-                suitability: "PERFORMANCE",
-                suitabilityClass: "rating-epic",
-                visual: "⚡",
-                desc: "Steep, punchy wall faces. A high-performance pointed shortboard is optimal for critical carves and sharp turns in the pocket."
-            };
-        } else {
-            return {
-                name: "Hybrid",
-                suitability: "CHOPPY CRUISE",
-                suitabilityClass: "rating-fair",
-                visual: "🏄‍♂️",
-                desc: "Solid wave size but messy wind. A hybrid shortboard or performance funboard will help you slice through chops cleanly."
-            };
-        }
-    }
-    
-    // 4. Large heavy conditions
-    if (windStatus === "OFFSHORE" || windSpeedKnots < 12) {
-        return {
-            name: "Step-Up",
-            suitability: "HEAVY CLEAN",
-            suitabilityClass: "rating-epic",
-            visual: "🚀",
-            desc: "Powerful, large wave faces! A Step-up board with a pulled-in tail and extra rail length ensures maximum control and speed."
-        };
-    } else {
-        return {
-            name: "Gun / Step-Up",
-            suitability: "HEAVY CHOP",
-            suitabilityClass: "rating-poor",
-            visual: "🌊",
-            desc: "Big choppy swell. A heavy step-up or larger gun is recommended to handle the fast drops and turbulent surface."
-        };
     }
 }
